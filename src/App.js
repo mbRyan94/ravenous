@@ -1,30 +1,31 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
-import SearchBar from '../src/components/SearchBar/SearchBar';
 import BusinessList from '../src/components/BusinessList/BusinessList';
+import SearchBar from '../src/components/SearchBar/SearchBar';
+import Yelp from '../src/components/util/yelp';
 
-const business = {
-  imageSrc: 'https://s3.amazonaws.com/codecademy-content/programs/react/ravenous/pizza.jpg',
-    name: 'MarginOtto Pizzeria',
-    address: '1010 Paddington Way',
-    city: 'Flavortown',
-    state: 'NY',
-    zipCode: '10101',
-    category: 'Italian',
-    rating: 4.5,
-    reviewCount: 90
-}
+class App extends React.Component {
+  //The arguments are the information to provide for the Yelp API call
+  constructor(props) {
+      super(props);
+      this.state = {
+        businesses: []
+      };
+      this.searchYelp = this.searchYelp.bind(this);
+  }
 
-const businesses = [business, business, business, business, business, business];
+  searchYelp(term, location, sortBy){
+     Yelp.search(term, location, sortBy).then(businesses => {
+       this.setState({businesses: businesses});
+     });
+  }
 
-class App extends Component {
   render() {
     return (
       <div className="App">
         <h1>ravenous</h1>
-        <SearchBar/>
-        <BusinessList businesses={businesses}/>
+        <SearchBar searchYelp={this.searchYelp}/>
+        <BusinessList businesses={this.state.businesses}/>
       </div>
     );
   }
